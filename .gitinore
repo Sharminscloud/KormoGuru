@@ -1,5 +1,0 @@
-config.php
-.env
-*. log
-node_modules/
-vendor/
