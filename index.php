@@ -9,7 +9,7 @@ session_start();
     <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
 <body>
-<header></header> <!-- Logo will be added via CSS -->
+<header></header>
 
 <div class="overlay">
     <div class="container">
