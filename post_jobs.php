@@ -11,14 +11,22 @@ if (isset($_POST['post_jobs'])) {
     $recruiter_id = $_SESSION['user_id'];
     $title = mysqli_real_escape_string($connection, $_POST['title']);
     $company = mysqli_real_escape_string($connection, $_POST['company']);
-    $skills_required = mysqli_real_escape_string($connection, $_POST['skills_required']);
     $description = mysqli_real_escape_string($connection, $_POST['description']);
+    $skills_required = array_filter(array_map('trim', explode(',', $_POST['skills_required'])));
 
-    $sql = "INSERT INTO jobs(recruiter_id, title, company, skills_required, Description) VALUES ('$recruiter_id', '$title', '$company', '$skills_required', '$description')";
+    $sql = "INSERT INTO jobs(recruiter_id, title, company, Description) VALUES ('$recruiter_id', '$title', '$company', '$description')";
     if (mysqli_query($connection, $sql)) {
-        $success_msg = "Job posted successfully!";
+        $job_id = mysqli_insert_id($connection);
+
+        // Insert each skill into job_skills table
+        foreach ($skills_required as $skill) {
+            $skill = strtolower(mysqli_real_escape_string($connection, $skill));
+            mysqli_query($connection, "INSERT INTO job_skills (job_id, skill) VALUES ($job_id, '$skill')");
+        }
+
+        $success_msg = "✅ Job posted successfully! Check posted job page!";
     } else {
-        $error_msg = "Failed to post job:" . mysqli_error($connection);
+        $error_msg = "Failed to post job: " . mysqli_error($connection);
     }
 }
 ?>
@@ -28,7 +36,7 @@ if (isset($_POST['post_jobs'])) {
 <head>
     <link rel="stylesheet" type="text/css" href="css/post_jobs.css">
     <title>KormoGuru - Post a job</title>
-    <link rel="stylesheet" href="css/style.css"> <!-- Assuming your styles are here -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
