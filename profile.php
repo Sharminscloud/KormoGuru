@@ -16,7 +16,8 @@ unset($_SESSION['success_msg']);
 $error_skills = $_SESSION['error_skills'] ?? '';
 unset($_SESSION['error_skills']);
 
-$sql = "SELECT username, email, role, skills FROM users WHERE id = $user_id";
+// Fetch user data
+$sql = "SELECT username, email, role FROM users WHERE id = $user_id";
 $result = mysqli_query($connection, $sql);
 $user = mysqli_fetch_assoc($result);
 
@@ -24,74 +25,86 @@ if (!$user) {
     $user = [
         'username' => '',
         'email' => '',
-        'role' => '',
-        'skills' => ''
+        'role' => ''
     ];
 }
 
+// Handle skill updates
 if (isset($_POST['skills'])) {
-    $skills = mysqli_real_escape_string($connection, $_POST['skills']);
-    $update_sql = "UPDATE users SET skills = '$skills' WHERE id = $user_id";
+    $skills = array_filter(array_map('trim', explode(',', $_POST['skills'])));
 
     if (isset($_POST['update_skills'])) {
-        if (mysqli_query($connection, $update_sql)) {
-            $_SESSION['success_msg'] = "Skills updated successfully!";
-        } else {
-            $_SESSION['error_skills'] = "Failed to update skills. Please try again.";
+        // Fetch existing skills
+        $existing_skills = [];
+        $res = mysqli_query($connection, "SELECT skill FROM profile_skills WHERE user_id = $user_id");
+        while ($row = mysqli_fetch_assoc($res)) {
+            $existing_skills[] = strtolower($row['skill']);
         }
+
+        // Insert only new ones
+        foreach ($skills as $skill) {
+            $skill = strtolower(mysqli_real_escape_string($connection, $skill));
+            if (!in_array($skill, $existing_skills)) {
+                mysqli_query($connection, "INSERT INTO profile_skills (user_id, skill) VALUES ($user_id, '$skill')");
+            }
+        }
+
+        $_SESSION['success_msg'] = "Skills added successfully!";
         header("Location: profile.php");
         exit();
     }
 
     if (isset($_POST['delete_skills'])) {
-        $update_sql = "UPDATE users SET skills = '' WHERE id = $user_id";
-        if (mysqli_query($connection, $update_sql)) {
-            $_SESSION['success_msg'] = "All skills deleted.";
-        } else {
-            $_SESSION['error_skills'] = "Failed to delete skills.";
-        }
+        mysqli_query($connection, "DELETE FROM profile_skills WHERE user_id = $user_id");
+        $_SESSION['success_msg'] = "All skills deleted.";
         header("Location: profile.php");
         exit();
     }
 }
+
+// Fetch current skills
+$skill_result = mysqli_query($connection, "SELECT skill FROM profile_skills WHERE user_id = $user_id");
+$skill_list = [];
+while ($row = mysqli_fetch_assoc($skill_result)) {
+    $skill_list[] = $row['skill'];
+}
+$skill_string = implode(', ', $skill_list);
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>KormoGuru - Your Profile</title>
-    <link rel="stylesheet" type="text/css" href="css/profile.css"> <!-- You can create and style this -->
+    <link rel="stylesheet" type="text/css" href="css/profile.css">
 </head>
 <body>
 <header>
     <div class="logo"></div>
-    <?php
-    $current_page = basename($_SERVER['PHP_SELF']); // Gets the current page filename
-    ?>
+    <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
     <nav class="nav-links">
-    <a href="index.php" class="<?= ($current_page == 'index.php') ? 'active-link' : '' ?>">Home</a>
-    <a href="browse_jobs.php" class="<?= ($current_page == 'browse_jobs.php') ? 'active-link' : '' ?>">Browse Jobs</a>
-
-    <?php if ($role === 'User'): ?>
-        <a href="job_status.php" class="<?= ($current_page == 'job_status.php') ? 'active-link' : '' ?>">Job Status</a>
-        <a href="skill_gap.php" class="<?= ($current_page == 'skill_gap.php') ? 'active-link' : '' ?>">Skill Gap</a>
-        <a href="profile.php" class="<?= ($current_page == 'profile.php') ? 'active-link' : '' ?>">Profile</a>
-        <a href="logout.php">Logout</a>
-    <?php elseif ($role === 'Recruiter'): ?>
-        <a href="post_jobs.php" class="<?= ($current_page == 'post_jobs.php') ? 'active-link' : '' ?>">Post Jobs</a>
-        <a href="posted_jobs.php" class="<?= ($current_page == 'posted_jobs.php') ? 'active-link' : '' ?>">Posted Jobs</a>
-        <a href="job_status.php" class="<?= ($current_page == 'job_status.php') ? 'active-link' : '' ?>">Job Status</a>
-        <a href="profile.php" class="<?= ($current_page == 'profile.php') ? 'active-link' : '' ?>">Profile</a>
-        <a href="logout.php">Logout</a>
-    <?php endif; ?>
-</nav>
+        <a href="index.php" class="<?= ($current_page == 'index.php') ? 'active-link' : '' ?>">Home</a>
+        <a href="browse_jobs.php" class="<?= ($current_page == 'browse_jobs.php') ? 'active-link' : '' ?>">Browse Jobs</a>
+        <?php if ($role === 'User'): ?>
+            <a href="job_status.php" class="<?= ($current_page == 'job_status.php') ? 'active-link' : '' ?>">Job Status</a>
+            <a href="skill_gap.php" class="<?= ($current_page == 'skill_gap.php') ? 'active-link' : '' ?>">Skill Gap</a>
+            <a href="profile.php" class="<?= ($current_page == 'profile.php') ? 'active-link' : '' ?>">Profile</a>
+            <a href="logout.php">Logout</a>
+        <?php elseif ($role === 'Recruiter'): ?>
+            <a href="post_jobs.php" class="<?= ($current_page == 'post_jobs.php') ? 'active-link' : '' ?>">Post Jobs</a>
+            <a href="posted_jobs.php" class="<?= ($current_page == 'posted_jobs.php') ? 'active-link' : '' ?>">Posted Jobs</a>
+            <a href="job_status.php" class="<?= ($current_page == 'job_status.php') ? 'active-link' : '' ?>">Job Status</a>
+            <a href="profile.php" class="<?= ($current_page == 'profile.php') ? 'active-link' : '' ?>">Profile</a>
+            <a href="logout.php">Logout</a>
+        <?php endif; ?>
+    </nav>
 </header>
-    <div class="main-content">
+
+<div class="main-content">
     <h2>Your Profile</h2>
     <h3>Personal details: </h3>
-    <p><strong>Username:</strong> <?= htmlspecialchars($user['username'] ?? '') ?></p>
-    <p><strong>Email:</strong> <?= htmlspecialchars($user['email'] ?? '') ?></p>
-    <p><strong>Role:</strong> <?= htmlspecialchars($user['role'] ?? '') ?></p>
+    <p><strong>Username:</strong> <?= htmlspecialchars($user['username']) ?></p>
+    <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
+    <p><strong>Role:</strong> <?= htmlspecialchars($user['role']) ?></p>
 
     <?php if ($role === 'Recruiter'): ?>
         <h3>Skills you are looking for:</h3>
@@ -99,7 +112,7 @@ if (isset($_POST['skills'])) {
         <h3>Your skills:</h3>
     <?php endif; ?>
 
-    <p><?= !empty($user['skills']) ? nl2br(htmlspecialchars($user['skills'] ?? '')) : "Not added yet." ?></p>
+    <p><?= !empty($skill_string) ? nl2br(htmlspecialchars($skill_string)) : "Not added yet." ?></p>
 
     <h3>Update Skills:</h3>
     <p>Type and press Enter to add skills. Click ❌ to remove.</p>
@@ -111,7 +124,7 @@ if (isset($_POST['skills'])) {
         <div class="tag-container" id="tag-container">
             <input type="text" id="tag-input" placeholder="Add a skill...">
         </div>
-        <input type="hidden" name="skills" id="skills-hidden" value="<?= htmlspecialchars($user['skills'] ?? '') ?>">
+        <input type="hidden" name="skills" id="skills-hidden">
         <br><br>
         <input type="submit" name="update_skills" value="Add New Skills">
         <input type="submit" name="delete_skills" value="Delete All Skills">
