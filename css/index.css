@@ -1,0 +1,122 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body background with background image */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: url('../images/index.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #f3f4f6;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Logo top-left, now larger */
+header {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 180px;
+    height: 80px;
+    background: url('../images/logo.png') no-repeat left center;
+    background-size: 120%; /* ✅ Scale up without losing quality */
+    z-index: 10;
+}
+
+/* Lightly tinted overlay to darken background slightly */
+.overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+/* Translucent content box with themed background */
+.container {
+    font-weight: bold;
+    background-color: #123a5c70;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 850px;
+    width: 100%;
+    box-shadow: 0 12px 28px #F7941D;
+    text-align: center;
+}
+
+/* Headings */
+h1 {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #F7941D;
+}
+
+h1 span {
+    color: #F7941D;
+}
+h2 {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #F7941D;
+}
+
+/* Paragraphs */
+p {
+    margin: 14px 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #e5e7eb;
+    text-align: left;
+
+}
+
+/* Links section */
+.link-group {
+    margin-top: 30px;
+}
+
+/* Button style links */
+.link-group a {
+    display: inline-block;
+    margin: 10px;
+    padding: 12px 28px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+
+/* Register button */
+.link-group a[href*="register"] {
+    background-color: #F7941D;
+}
+.link-group a[href*="register"]:hover {
+    background-color: #123A5C;
+}
+
+/* Login button */
+.link-group a[href*="login"] {
+    background-color: #F7941D; 
+}
+.link-group a[href*="login"]:hover {
+    background-color: #123A5C;
+}
+
+/* Other internal links */
+.link-group a[href*="profile"],
+.link-group a[href*="browse_jobs"],
+.link-group a[href*="post_jobs"],
+.link-group a[href*="skill_gap"],
+.link-group a[href*="logout"] {
+    background-color: #F7941D;
+}
+.link-group a:hover {
+    background-color: #123A5C;
+}

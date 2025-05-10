@@ -1,0 +1,151 @@
+/* Baisc things that must remain unchanged*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Background image */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: url('../images/browse.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #fefae0;
+    min-height: 100vh;
+}
+
+/* Header: Logo + Navigation */
+header {
+    background-color: #f7951d48;
+    padding: 5px 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; /* optional if you want it to wrap on smaller screens */
+}
+
+
+.logo {
+    top: 20px;
+    left: 20px;
+    width: 180px;
+    height: 80px;
+    background: url('../images/logo.png') no-repeat left center;
+    background-size: 120%; /* ✅ Scale up without losing quality */
+    z-index: 10;
+}
+
+
+.nav-links a {
+    margin-left: 20px;
+    color: #fefae0;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: #F7941D;
+}
+
+
+/* Main content */
+.main-content {
+    padding: 30px;
+    padding-bottom: 60px;
+    max-width: 850px;
+    margin: 40px auto;
+    background-color: #123a5ce9;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px #f7951da1;
+    
+}
+
+/* Headings */
+h2 {
+    color: #F7941D;
+    margin-bottom: 20px;
+    text-align: center;
+}
+/* Links */
+
+.active-link {
+    color: #F7941D !important;
+    border-bottom: 2px solid #F7941D;
+}
+a {
+    color: #facc15;
+    text-decoration: none;
+    font-weight: bold;
+
+}
+
+a:hover {
+    color: #fefae0;
+}
+/* Job listings*/
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background-color: #f7951d31;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 6px solid #F7941D;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+li strong {
+    font-size: 18px;
+    color: #F7941D;
+}
+
+li em {
+    display: block;
+    color: #F7941D;
+    margin: 6px 0;
+    font-style: normal;
+}
+
+/*---------------------------------------------------------*/
+
+/* Form */
+form {
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+input[type="text"] {
+    padding: 10px;
+    width: 60%;
+    max-width: 400px;
+    border-radius: 6px;
+    border: none;
+    margin-right: 10px;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    background-color: #F7941D;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+input[type="submit"]:hover {
+    background-color: #ea580c;
+}
+
+
+
+p {
+    color: #fefae0;
+    margin: 10px 0;
+    font-weight: bold;
+}
